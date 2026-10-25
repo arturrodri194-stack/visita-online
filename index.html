@@ -1,0 +1,400 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Visita on-line.com</title>
+<meta name="theme-color" content="#ffffff">
+<style>
+:root{
+  --gold:#C9A24B; --gold-d:#A67C2E; --gold-l:#F4EBD3;
+  --gray:#6B6F76; --gray-d:#2E3136; --gray-l:#F3F3F1; --line:#E4E2DC; --white:#fff;
+  --r:16px; --sh:0 8px 28px rgba(46,49,54,.10);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{background:var(--gray-l);color:var(--gray-d);font-family:"Segoe UI",system-ui,-apple-system,Roboto,sans-serif}
+button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
+input,textarea,select{font:inherit;color:inherit}
+[hidden]{display:none!important}
+
+header{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.94);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.bar{max-width:1100px;margin:0 auto;padding:12px 18px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.logo{display:flex;align-items:center;gap:10px;cursor:pointer;margin-right:auto}
+.logo i{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--gold),var(--gold-d));display:grid;place-items:center;color:#fff;font-style:normal;font-weight:700}
+.logo b{font-size:17px;letter-spacing:.2px}
+.logo b span{color:var(--gold-d)}
+.btn{padding:10px 16px;border-radius:12px;font-weight:600;font-size:14px;transition:.2s}
+.btn.gold{background:linear-gradient(135deg,var(--gold),var(--gold-d));color:#fff}
+.btn.gold:active{transform:scale(.97)}
+.btn.gold[disabled]{opacity:.6}
+.btn.line{border:1px solid var(--line);background:#fff}
+.btn.gray{background:var(--gray-d);color:#fff}
+.btn.danger{color:#a33}
+.btn.sm{padding:7px 12px;font-size:13px;border-radius:10px}
+.badge{font-size:11px;font-weight:700;background:var(--gold-l);color:var(--gold-d);padding:4px 9px;border-radius:99px}
+
+main{max-width:1100px;margin:0 auto;padding:18px}
+.hero{background:linear-gradient(135deg,#fff 0%,var(--gold-l) 100%);border:1px solid var(--line);border-radius:22px;padding:28px 22px;margin-bottom:18px}
+.hero h1{font-size:clamp(22px,4.6vw,34px);line-height:1.15}
+.hero h1 em{font-style:normal;color:var(--gold-d)}
+.hero p{color:var(--gray);margin-top:8px;max-width:560px}
+.tools{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}
+.search{flex:1;min-width:200px;padding:12px 16px;border-radius:12px;border:1px solid var(--line);background:#fff}
+.search:focus{outline:2px solid var(--gold)}
+.setup{background:#fff;border:1px solid var(--gold);border-radius:var(--r);padding:18px;margin-bottom:16px;line-height:1.55}
+.setup b{color:var(--gold-d)}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+.card{background:#fff;border-radius:var(--r);overflow:hidden;box-shadow:var(--sh);border:1px solid var(--line);display:flex;flex-direction:column}
+.cover{aspect-ratio:16/10;background:var(--gray-l) center/cover;position:relative;cursor:pointer}
+.cover .tag{position:absolute;left:12px;top:12px;background:rgba(255,255,255,.95);color:var(--gold-d);font-size:12px;font-weight:700;padding:5px 10px;border-radius:99px}
+.cover .ph{position:absolute;inset:0;display:grid;place-items:center;color:var(--gray);font-size:13px}
+.card .in{padding:14px 16px 16px;display:flex;flex-direction:column;gap:6px;flex:1}
+.card h3{font-size:17px}
+.card .loc{color:var(--gray);font-size:13px}
+.card .price{color:var(--gold-d);font-weight:700;font-size:18px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:2px}
+.chip{font-size:11px;padding:4px 9px;border-radius:99px;background:var(--gray-l);color:var(--gray)}
+.card .act{display:flex;gap:8px;margin-top:auto;padding-top:10px}
+.card .act .btn{flex:1}
+.empty{text-align:center;padding:50px 20px;color:var(--gray);background:#fff;border:1px dashed var(--line);border-radius:var(--r)}
+
+.back{margin-bottom:12px}
+.stage{position:relative;width:100%;aspect-ratio:16/9;min-height:300px;max-height:72vh;background:#1b1d20;border-radius:20px;overflow:hidden;box-shadow:var(--sh);touch-action:none;user-select:none}
+.stage canvas{width:100%;height:100%;display:block;cursor:grab}
+.stage canvas:active{cursor:grabbing}
+.stage img.flat{width:100%;height:100%;object-fit:contain;background:#1b1d20}
+.stage .hint{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);background:rgba(255,255,255,.92);padding:7px 14px;border-radius:99px;font-size:12px;font-weight:600;color:var(--gray-d);pointer-events:none;transition:opacity .6s;white-space:nowrap}
+.stage .name{position:absolute;left:14px;top:14px;background:rgba(255,255,255,.92);padding:7px 14px;border-radius:99px;font-size:13px;font-weight:700;color:var(--gold-d)}
+.ctrl{position:absolute;right:12px;top:12px;display:flex;flex-direction:column;gap:8px}
+.ctrl button{width:40px;height:40px;border-radius:12px;background:rgba(255,255,255,.92);font-size:18px;font-weight:700;display:grid;place-items:center}
+.ctrl button.on{background:var(--gold);color:#fff}
+.stage.full{position:fixed;inset:0;z-index:50;max-height:none;border-radius:0;aspect-ratio:auto}
+.tabs{display:flex;gap:8px;overflow-x:auto;padding:14px 2px 6px;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:none;padding:10px 16px;border-radius:99px;background:#fff;border:1px solid var(--line);font-weight:600;font-size:14px;color:var(--gray)}
+.tab.on{background:linear-gradient(135deg,var(--gold),var(--gold-d));color:#fff;border-color:transparent}
+.info{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:18px;margin-top:12px}
+.info h2{font-size:22px}
+.info .price{color:var(--gold-d);font-weight:800;font-size:24px;margin:6px 0}
+.info p{color:var(--gray);line-height:1.55;white-space:pre-wrap}
+.info .btn{margin-top:14px;display:inline-block;text-decoration:none}
+
+dialog{border:0;border-radius:20px;padding:0;width:min(560px,94vw);max-height:92vh;box-shadow:0 20px 60px rgba(0,0,0,.25);color:var(--gray-d)}
+dialog::backdrop{background:rgba(30,32,35,.55)}
+.dlg{padding:22px;overflow:auto;max-height:92vh}
+.dlg h2{font-size:20px;margin-bottom:4px}
+.dlg .sub{color:var(--gray);font-size:13px;margin-bottom:14px}
+label.f{display:block;font-size:12px;font-weight:700;color:var(--gray);margin:12px 0 5px;text-transform:uppercase;letter-spacing:.4px}
+.inp{width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:#fff}
+.inp:focus{outline:2px solid var(--gold)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.rooms{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px}
+.room{border:1px dashed #cfcac0;border-radius:14px;padding:10px;background:var(--gray-l);display:flex;flex-direction:column;gap:8px}
+.room b{font-size:13px}
+.room .pv{aspect-ratio:2/1;border-radius:10px;background:#fff center/cover;display:grid;place-items:center;color:#aaa;font-size:12px}
+.room .rb{display:flex;gap:6px}
+.room .rb .btn{flex:1;padding:7px 4px;font-size:12px}
+.room input{display:none}
+.acts{display:flex;gap:10px;justify-content:flex-end;margin-top:18px}
+.err{color:#b33;font-size:13px;margin-top:8px;min-height:18px}
+.note{font-size:12px;color:var(--gray);background:var(--gold-l);border-radius:10px;padding:10px 12px;margin-top:12px;line-height:1.45}
+.loading{text-align:center;color:var(--gray);padding:40px}
+footer{text-align:center;color:var(--gray);font-size:12px;padding:26px 0 40px}
+@media(max-width:520px){.row2,.rooms{grid-template-columns:1fr}.logo b{font-size:15px}}
+</style>
+</head>
+<body>
+
+<header><div class="bar">
+  <div class="logo" onclick="goHome()"><i>V</i><b>Visita <span>on-line</span>.com</b></div>
+  <span id="mBadge" class="badge" hidden>MASTER</span>
+  <button id="bNovo" class="btn gold sm" hidden onclick="openForm()">+ Novo imóvel</button>
+  <button id="bLogin" class="btn line sm" onclick="openLogin()">Acesso master</button>
+  <button id="bSair" class="btn line sm" hidden onclick="logout()">Sair</button>
+</div></header>
+
+<main>
+  <section id="home">
+    <div id="setup" class="setup" hidden>
+      <b>Falta conectar o Firebase.</b> Abra este arquivo, localize <b>FIREBASE_CONFIG</b> no início do script e cole as chaves do seu projeto. O passo a passo está no chat.
+    </div>
+    <div class="hero">
+      <h1>Entre no imóvel <em>sem sair de casa</em></h1>
+      <p>Escolha um imóvel, toque em um cômodo e arraste a tela para olhar ao redor, como se estivesse lá dentro.</p>
+      <div class="tools"><input id="q" class="search" placeholder="Buscar por nome ou bairro…" oninput="renderGrid()"></div>
+    </div>
+    <div id="grid" class="grid"><div class="loading" style="grid-column:1/-1">Carregando imóveis…</div></div>
+  </section>
+
+  <section id="detail" hidden>
+    <button class="btn line sm back" onclick="goHome()">← Voltar aos imóveis</button>
+    <div id="stage" class="stage">
+      <canvas id="cv"></canvas>
+      <img id="flat" class="flat" hidden alt="">
+      <div id="sName" class="name"></div>
+      <div class="ctrl">
+        <button title="Aproximar" onclick="V.zoom(-8)">+</button>
+        <button title="Afastar" onclick="V.zoom(8)">−</button>
+        <button id="bAuto" title="Giro automático" onclick="V.toggleAuto()">⟳</button>
+        <button title="Tela cheia" onclick="toggleFull()">⛶</button>
+      </div>
+      <div id="hint" class="hint">👆 Arraste para olhar ao redor</div>
+    </div>
+    <div id="tabs" class="tabs"></div>
+    <div id="info" class="info"></div>
+  </section>
+</main>
+<footer>Visita on-line.com · Artur Rodrigues · Consultor de Imóveis</footer>
+
+<dialog id="dLogin"><form class="dlg" onsubmit="doLogin(event)">
+  <h2>Acesso master</h2><p class="sub">Área exclusiva para cadastro e edição dos imóveis.</p>
+  <label class="f">Login</label><input id="lu" class="inp" autocomplete="username" autocapitalize="off" required>
+  <label class="f">Senha</label><input id="lp" class="inp" type="password" autocomplete="current-password" required>
+  <div id="lerr" class="err"></div>
+  <div class="acts"><button type="button" class="btn line" onclick="dLogin.close()">Cancelar</button><button class="btn gold">Entrar</button></div>
+</form></dialog>
+
+<dialog id="dForm"><form class="dlg" onsubmit="saveImovel(event)">
+  <h2 id="fTitle">Novo imóvel</h2><p class="sub">Preencha o que tiver. Todos os cômodos são opcionais.</p>
+  <label class="f">Nome do imóvel</label><input id="fNome" class="inp" placeholder="Ex.: Casa 3 quartos – Jardim das Flores" required>
+  <div class="row2">
+    <div><label class="f">Bairro / cidade</label><input id="fLoc" class="inp" placeholder="Castanhal – PA"></div>
+    <div><label class="f">Valor (R$)</label><input id="fPreco" class="inp" inputmode="decimal" placeholder="250000"></div>
+  </div>
+  <label class="f">Descrição</label><textarea id="fDesc" class="inp" rows="3" placeholder="Metragem, diferenciais, condições…"></textarea>
+  <label class="f">Cômodos em 3D (foto 360°)</label>
+  <div id="rooms" class="rooms"></div>
+  <div class="note">Use fotos panorâmicas 360° (proporção 2:1) para o efeito de “entrar” no cômodo. Fotos comuns também funcionam, mas aparecem sem giro. As imagens são otimizadas automaticamente.</div>
+  <div id="ferr" class="err"></div>
+  <div class="acts"><button type="button" class="btn line" onclick="dForm.close()">Cancelar</button><button id="bSave" class="btn gold">Salvar imóvel</button></div>
+</form></dialog>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script type="module">
+import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {getFirestore,collection,doc,setDoc,getDoc,getDocs,deleteDoc,query,orderBy} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import {getAuth,signInWithEmailAndPassword,signOut,onAuthStateChanged} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+/* ====== COLE AQUI AS CHAVES DO SEU PROJETO FIREBASE ====== */
+const FIREBASE_CONFIG={
+  apiKey:"AIzaSyBpELYYy-jGYWqhr3OjgjYaoEClfC9wrFo",
+  authDomain:"visitaonline-604f3.firebaseapp.com",
+  projectId:"visitaonline-604f3",
+  storageBucket:"visitaonline-604f3.firebasestorage.app",
+  messagingSenderId:"50676035971",
+  appId:"1:50676035971:web:a49da4ac65305b96ff46b6"
+};
+/* ========================================================== */
+
+const MASTER_DOMAIN="@visitaonline.app";   // login "Artur02" vira artur02@visitaonline.app no Firebase Auth
+const WA="5591988092315";
+const ROOMS=[["sala","Sala"],["cozinha","Cozinha"],["quarto1","Quarto 1"],["quarto2","Quarto 2"],["suite","Suíte"],["lazer","Área de Lazer"],["frente","Frente do imóvel"],["fachada","Fachada"]];
+const $=id=>document.getElementById(id);
+const configured=!Object.values(FIREBASE_CONFIG).some(v=>String(v).startsWith("COLE"));
+let db,auth,items=[],isMaster=false,cur=null,draft=null,editId=null,showTok=0;
+const roomCache=new Map();
+
+const brl=v=>v?Number(v).toLocaleString("pt-BR",{style:"currency",currency:"BRL",maxFractionDigits:0}):"Consulte";
+const esc=s=>String(s||"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const nameOf=k=>ROOMS.find(x=>x[0]===k)[1];
+const keysOf=im=>ROOMS.map(r=>r[0]).filter(k=>(im.ambientes||[]).includes(k));
+
+/* ---------- dados ---------- */
+async function loadItems(){
+  if(!configured){$("setup").hidden=false;items=[];renderGrid();return}
+  try{
+    const snap=await getDocs(query(collection(db,"imoveis"),orderBy("ts","desc")));
+    items=snap.docs.map(d=>({id:d.id,...d.data()}));
+  }catch(e){items=[];$("grid").innerHTML=`<div class="empty" style="grid-column:1/-1">Não foi possível carregar os imóveis. Verifique a conexão e as regras do Firestore.</div>`;return}
+  renderGrid();
+}
+async function getRoom(id,k){
+  const key=id+"/"+k;if(roomCache.has(key))return roomCache.get(key);
+  const s=await getDoc(doc(db,"imoveis",id,"ambientes",k));
+  const r=s.exists()?s.data():null;if(r)roomCache.set(key,r);return r;
+}
+
+/* ---------- render ---------- */
+function renderGrid(){
+  const t=$("q").value.trim().toLowerCase();
+  const list=items.filter(i=>!t||((i.nome||"")+" "+(i.loc||"")).toLowerCase().includes(t));
+  $("grid").innerHTML=list.length?list.map(i=>{
+    const ks=keysOf(i);
+    return `<article class="card">
+      <div class="cover" style="${i.capa?`background-image:url('${i.capa}')`:""}" onclick="openDetail('${i.id}')">
+        ${i.capa?"":'<div class="ph">Sem imagem</div>'}
+        ${ks.length?`<span class="tag">◉ ${ks.length} ${ks.length>1?"ambientes":"ambiente"} em 3D</span>`:""}
+      </div>
+      <div class="in">
+        <h3>${esc(i.nome)}</h3><div class="loc">${esc(i.loc)}</div>
+        <div class="price">${brl(i.preco)}</div>
+        <div class="chips">${ks.map(k=>`<span class="chip">${nameOf(k)}</span>`).join("")}</div>
+        <div class="act">
+          <button class="btn gold sm" onclick="openDetail('${i.id}')">Entrar no imóvel</button>
+          ${isMaster?`<button class="btn line sm" onclick="openForm('${i.id}')">Editar</button><button class="btn line sm danger" onclick="delImovel('${i.id}')">Excluir</button>`:""}
+        </div>
+      </div></article>`}).join("")
+  :`<div class="empty" style="grid-column:1/-1">${items.length?"Nenhum imóvel encontrado.":(isMaster?"Nenhum imóvel cadastrado ainda. Toque em “+ Novo imóvel”.":"Em breve novos imóveis disponíveis para visita.")}</div>`;
+}
+function goHome(){V.stop();if($("stage").classList.contains("full"))toggleFull();$("detail").hidden=true;$("home").hidden=false;window.scrollTo(0,0);renderGrid()}
+
+function openDetail(id){
+  cur=items.find(i=>i.id===id);if(!cur)return;
+  $("home").hidden=true;$("detail").hidden=false;window.scrollTo(0,0);
+  const ks=keysOf(cur);
+  $("tabs").innerHTML=ks.map(k=>`<button class="tab" data-k="${k}" onclick="showRoom('${k}')">${nameOf(k)}</button>`).join("");
+  const msg=encodeURIComponent(`Olá Artur! Vi o imóvel "${cur.nome}" no Visita on-line e tenho interesse.`);
+  $("info").innerHTML=`<h2>${esc(cur.nome)}</h2><div style="color:var(--gray)">${esc(cur.loc)}</div><div class="price">${brl(cur.preco)}</div>${cur.desc?`<p>${esc(cur.desc)}</p>`:""}<a class="btn gold" target="_blank" rel="noopener" href="https://wa.me/${WA}?text=${msg}">Tenho interesse · WhatsApp</a>`;
+  if(ks.length)showRoom(ks[0]);
+  else{V.stop();$("sName").textContent="Sem ambientes cadastrados";$("flat").hidden=true;$("cv").hidden=false;$("hint").style.opacity=0}
+}
+async function showRoom(k){
+  const tok=++showTok;
+  document.querySelectorAll(".tab").forEach(b=>b.classList.toggle("on",b.dataset.k===k));
+  $("sName").textContent=nameOf(k)+" · carregando…";
+  const h=$("hint");h.style.opacity=0;
+  let r;try{r=await getRoom(cur.id,k)}catch(e){r=null}
+  if(tok!==showTok)return;
+  if(!r){$("sName").textContent=nameOf(k)+" · indisponível";return}
+  $("sName").textContent=nameOf(k);h.style.opacity=1;setTimeout(()=>h.style.opacity=0,3500);
+  if(r.ratio>=1.9){$("flat").hidden=true;$("cv").hidden=false;h.textContent="👆 Arraste para olhar ao redor · pinça para zoom";V.load(r.data)}
+  else{V.stop();$("cv").hidden=true;$("flat").hidden=false;$("flat").src=r.data;h.textContent="Foto comum (sem giro 360°)"}
+}
+function toggleFull(){$("stage").classList.toggle("full");setTimeout(()=>V.resize(),50)}
+
+/* ---------- visualizador 360 ---------- */
+const V=(()=>{
+  let ren,scene,cam,mesh,tex,raf=0,lon=0,lat=0,auto=false,drag=null;const ptr=new Map();let pd=0;
+  function init(){
+    if(ren)return;const cv=$("cv");
+    ren=new THREE.WebGLRenderer({canvas:cv,antialias:true});ren.setPixelRatio(Math.min(devicePixelRatio,2));
+    scene=new THREE.Scene();cam=new THREE.PerspectiveCamera(75,1,.1,1100);
+    const g=new THREE.SphereGeometry(500,64,40);g.scale(-1,1,1);
+    mesh=new THREE.Mesh(g,new THREE.MeshBasicMaterial({color:0xffffff}));scene.add(mesh);
+    cv.addEventListener("pointerdown",e=>{cv.setPointerCapture(e.pointerId);ptr.set(e.pointerId,e);if(ptr.size===1)drag={x:e.clientX,y:e.clientY,lon,lat};if(ptr.size===2)pd=dist()});
+    cv.addEventListener("pointermove",e=>{if(!ptr.has(e.pointerId))return;ptr.set(e.pointerId,e);
+      if(ptr.size===2){const d=dist();zoom((pd-d)*.1);pd=d;return}
+      if(drag){const k=cam.fov/75;lon=(drag.x-e.clientX)*.15*k+drag.lon;lat=Math.max(-85,Math.min(85,(e.clientY-drag.y)*.15*k+drag.lat))}});
+    const up=e=>{ptr.delete(e.pointerId);if(ptr.size===1){const p=[...ptr.values()][0];drag={x:p.clientX,y:p.clientY,lon,lat}}if(!ptr.size)drag=null};
+    cv.addEventListener("pointerup",up);cv.addEventListener("pointercancel",up);
+    cv.addEventListener("wheel",e=>{e.preventDefault();zoom(e.deltaY*.05)},{passive:false});
+    addEventListener("resize",resize);
+  }
+  const dist=()=>{const [a,b]=[...ptr.values()];return Math.hypot(a.clientX-b.clientX,a.clientY-b.clientY)};
+  function zoom(d){if(!cam)return;cam.fov=Math.max(30,Math.min(95,cam.fov+d));cam.updateProjectionMatrix()}
+  function resize(){if(!ren)return;const s=$("stage");ren.setSize(s.clientWidth,s.clientHeight,false);cam.aspect=s.clientWidth/s.clientHeight;cam.updateProjectionMatrix()}
+  function load(u){
+    init();lon=0;lat=0;cam.fov=75;resize();
+    new THREE.TextureLoader().load(u,t=>{
+      t.minFilter=THREE.LinearFilter;t.generateMipmaps=false;
+      if(tex)tex.dispose();tex=t;mesh.material.map=t;mesh.material.needsUpdate=true;
+      if(!raf)loop();
+    });
+  }
+  function loop(){
+    raf=requestAnimationFrame(loop);
+    if(auto&&!drag)lon+=.12;
+    const p=THREE.MathUtils.degToRad(90-lat),t=THREE.MathUtils.degToRad(lon);
+    cam.lookAt(500*Math.sin(p)*Math.cos(t),500*Math.cos(p),500*Math.sin(p)*Math.sin(t));
+    ren.render(scene,cam);
+  }
+  function stop(){cancelAnimationFrame(raf);raf=0}
+  function toggleAuto(){auto=!auto;$("bAuto").classList.toggle("on",auto)}
+  return {load,stop,zoom,resize,toggleAuto};
+})();
+
+/* ---------- acesso master ---------- */
+function applyRole(){
+  $("mBadge").hidden=!isMaster;$("bNovo").hidden=!isMaster;
+  $("bSair").hidden=!isMaster;$("bLogin").hidden=isMaster;renderGrid();
+}
+function openLogin(){
+  if(!configured){alert("Conecte o Firebase primeiro (veja o aviso na página inicial).");return}
+  $("lerr").textContent="";$("lu").value="";$("lp").value="";dLogin.showModal();
+}
+async function doLogin(e){e.preventDefault();
+  const email=$("lu").value.trim().toLowerCase()+MASTER_DOMAIN;
+  $("lerr").textContent="Entrando…";
+  try{await signInWithEmailAndPassword(auth,email,$("lp").value);dLogin.close()}
+  catch(er){$("lerr").textContent="Login ou senha incorretos."}
+}
+async function logout(){await signOut(auth)}
+
+/* ---------- cadastro ---------- */
+async function openForm(id){
+  editId=id||null;const im=id?items.find(i=>i.id===id):null;
+  draft={};
+  $("fTitle").textContent=im?"Editar imóvel":"Novo imóvel";
+  $("fNome").value=im?im.nome:"";$("fLoc").value=im?im.loc:"";$("fPreco").value=im?im.preco:"";$("fDesc").value=im?im.desc:"";
+  $("ferr").textContent="";drawRooms();dForm.showModal();
+  if(im&&(im.ambientes||[]).length){
+    $("ferr").textContent="Carregando imagens do imóvel…";
+    try{for(const k of im.ambientes){const r=await getRoom(id,k);if(r&&!draft[k])draft[k]={data:r.data,ratio:r.ratio,changed:false}}}catch(e){}
+    $("ferr").textContent="";drawRooms();
+  }
+}
+function drawRooms(){
+  $("rooms").innerHTML=ROOMS.map(([k,n])=>{const r=draft[k];return `<div class="room"><b>${n}</b>
+    <div class="pv" style="${r?`background-image:url('${r.data}')`:""}">${r?"":"Sem imagem"}</div>
+    <div class="rb"><label class="btn gray sm" style="text-align:center;cursor:pointer">${r?"Trocar":"Enviar"}<input type="file" accept="image/*" onchange="pick('${k}',this)"></label>
+    ${r?`<button type="button" class="btn line sm danger" onclick="rmRoom('${k}')">Remover</button>`:""}</div></div>`}).join("");
+}
+async function shrink(file){
+  const bmp=await createImageBitmap(file);let w=Math.min(bmp.width,2560),q=.82;
+  const c=document.createElement("canvas"),x=c.getContext("2d");
+  for(;;){
+    const h=Math.round(w*bmp.height/bmp.width);c.width=w;c.height=h;x.drawImage(bmp,0,0,w,h);
+    const d=c.toDataURL("image/jpeg",q);
+    if(d.length<950000||w<1024)return{data:d,ratio:bmp.width/bmp.height,changed:true};
+    if(q>.55)q-=.1;else{w=Math.round(w*.8);q=.7}
+  }
+}
+function thumb(data){return new Promise(res=>{const i=new Image();i.onload=()=>{const w=640,h=Math.round(w*i.height/i.width);const c=document.createElement("canvas");c.width=w;c.height=h;c.getContext("2d").drawImage(i,0,0,w,h);res(c.toDataURL("image/jpeg",.72))};i.onerror=()=>res("");i.src=data})}
+async function pick(k,inp){const f=inp.files[0];if(!f)return;
+  try{$("ferr").textContent="Otimizando imagem…";draft[k]=await shrink(f);$("ferr").textContent=""}catch(e){$("ferr").textContent="Não foi possível ler essa imagem."}
+  drawRooms()}
+function rmRoom(k){delete draft[k];drawRooms()}
+
+async function saveImovel(e){e.preventDefault();
+  const btn=$("bSave");btn.disabled=true;btn.textContent="Salvando…";$("ferr").textContent="";
+  try{
+    const id=editId||("im"+Date.now());
+    const old=editId?(items.find(i=>i.id===editId).ambientes||[]):[];
+    const keys=ROOMS.map(r=>r[0]).filter(k=>draft[k]);
+    for(const k of keys)if(draft[k].changed){
+      await setDoc(doc(db,"imoveis",id,"ambientes",k),{data:draft[k].data,ratio:draft[k].ratio});
+      roomCache.set(id+"/"+k,{data:draft[k].data,ratio:draft[k].ratio});
+    }
+    for(const k of old)if(!keys.includes(k)){await deleteDoc(doc(db,"imoveis",id,"ambientes",k));roomCache.delete(id+"/"+k)}
+    const ck=["fachada","frente","sala","cozinha","suite","quarto1","quarto2","lazer"].find(k=>draft[k]);
+    const capa=ck?await thumb(draft[ck].data):"";
+    await setDoc(doc(db,"imoveis",id),{
+      nome:$("fNome").value.trim(),loc:$("fLoc").value.trim(),
+      preco:$("fPreco").value.replace(/[^\d.]/g,""),desc:$("fDesc").value.trim(),
+      ambientes:keys,capa,ts:editId?items.find(i=>i.id===editId).ts:Date.now()
+    });
+    dForm.close();await loadItems();
+  }catch(er){$("ferr").textContent="Erro ao salvar. Confira se está logado como master e se as regras do Firestore foram publicadas."}
+  btn.disabled=false;btn.textContent="Salvar imóvel";
+}
+async function delImovel(id){
+  if(!confirm("Excluir este imóvel e todas as imagens?"))return;
+  try{
+    const im=items.find(i=>i.id===id);
+    for(const k of (im.ambientes||[])){await deleteDoc(doc(db,"imoveis",id,"ambientes",k));roomCache.delete(id+"/"+k)}
+    await deleteDoc(doc(db,"imoveis",id));
+    items=items.filter(i=>i.id!==id);renderGrid();
+  }catch(e){alert("Não foi possível excluir.")}
+}
+
+/* ---------- início ---------- */
+Object.assign(window,{goHome,openDetail,showRoom,toggleFull,V,openLogin,doLogin,logout,openForm,pick,rmRoom,saveImovel,delImovel,renderGrid});
+if(configured){
+  const app=initializeApp(FIREBASE_CONFIG);db=getFirestore(app);auth=getAuth(app);
+  onAuthStateChanged(auth,u=>{isMaster=!!u&&(u.email||"").endsWith(MASTER_DOMAIN);applyRole()});
+}
+loadItems();
+</script>
+</body>
+</html>
